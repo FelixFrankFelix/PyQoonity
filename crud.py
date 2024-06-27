@@ -6,19 +6,19 @@ from typing import List
 from fastapi import HTTPException
 
 def get_user_by_id(db: Session, user_id: int):
-    result = db.execute(text("SELECT * FROM users WHERE user_id = :user_id"), {'user_id': user_id})
+    result = db.execute(text("SELECT * FROM users WHERE user_id = :user_id AND user_status != 'DELETED'"), {'user_id': user_id})
     return result.fetchone()
 
-def get_user_by_email(db: Session, user_email: int):
-    result = db.execute(text("SELECT * FROM users WHERE user_email = :user_email"), {'user_email': user_email})
+def get_user_by_email(db: Session, user_email: str):
+    result = db.execute(text("SELECT * FROM users WHERE user_email = :user_email AND user_status != 'DELETED'"), {'user_email': user_email})
     return result.fetchone()
 
-def get_user_by_name(db: Session, user_name: int):
-    result = db.execute(text("SELECT * FROM users WHERE user_name = :user_name"), {'user_name': user_name})
+def get_user_by_name(db: Session, user_name: str):
+    result = db.execute(text("SELECT * FROM users WHERE user_name = :user_name AND user_status != 'DELETED'"), {'user_name': user_name})
     return result.fetchall()
 
 def get_users(db: Session):
-    result = db.execute(text("SELECT * FROM users ORDER BY user_id"))
+    result = db.execute(text("SELECT * FROM users WHERE user_status != 'DELETED' ORDER BY user_id"))
     return result.fetchall()
 
 def create_user(db: Session, user: UserCreate):
@@ -83,6 +83,6 @@ def delete_user(db: Session, user_id: int):
     db.commit()
     return get_user_by_id(db, user_id)
 
-def get_user_by_email(db: Session, user_email: str):
-    result = db.execute(text("SELECT * FROM users WHERE user_email = :user_email"), {'user_email': user_email})
-    return result.fetchone()
+#def get_user_by_email(db: Session, user_email: str):
+#    result = db.execute(text("SELECT * FROM users WHERE user_email = :user_email"), {'user_email': user_email})
+#    return result.fetchone()

@@ -81,7 +81,7 @@ def delete_user(db: Session, user_id: int):
         {'user_updated_at': user_updated_at, 'user_id': user_id}
     )
     db.commit()
-    return get_user(db, user_id)
+    return get_user_by_id(db, user_id)
 
 def get_user_by_email(db: Session, user_email: str):
     result = db.execute(text("SELECT * FROM users WHERE user_email = :user_email"), {'user_email': user_email})

@@ -42,7 +42,7 @@ def read_user_by_email(user_email: str, db: Session = Depends(get_db)):
 @app.get("/read-user-by-name/{user_name}", response_model=List[schemas.User])
 def read_user_by_name(user_name: str, db: Session = Depends(get_db)):
     db_user = crud.get_user_by_name(db, user_name=user_name)
-    if db_user is None:
+    if not db_user:
         raise HTTPException(status_code=404, detail="User not found")
     return db_user
 

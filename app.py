@@ -1,8 +1,9 @@
 from fastapi import FastAPI, Depends, HTTPException
 from sqlalchemy.orm import Session
-from typing import List
+from typing import List,Union
 import crud, schemas
 from db import SessionLocal, engine
+from utility.exceptions import ResponseConstant
 
 app = FastAPI()
 
@@ -14,23 +15,34 @@ def get_db():
     finally:
         db.close()
 
-@app.post("/create-user/", response_model=schemas.User)
+@app.post("/create-user/", response_model=schemas.ResponseUnion)
 def create_user(user: schemas.UserCreate, db: Session = Depends(get_db)):
     db_user = crud.get_user_by_email(db, user.user_email)
     if db_user:
-        raise HTTPException(status_code=400, detail="Email already registered")
-    return crud.create_user(db=db, user=user)
+        return {
+        "ResponseCode": ResponseConstant.DUPLICATE_RECORD.ResponseCode,
+        "ResponseMessage": "email already exist", 
+        }
+    return {
+        "ResponseCode": ResponseConstant.SUCCESS.ResponseCode,
+        "ResponseMessage": ResponseConstant.SUCCESS.ResponseMessage, 
+        "body" : crud.create_user(db=db, user=user)
+        }
 
 @app.get("/read-users/", response_model=List[schemas.User])
 def read_users(db: Session = Depends(get_db)):
     return crud.get_users(db)
 
-@app.get("/read-user-by-id/{user_id}", response_model=schemas.User)
+@app.get("/read-user-by-id/{user_id}", response_model=schemas.ResponseUnion)
 def read_user_by_id(user_id: int, db: Session = Depends(get_db)):
     db_user = crud.get_user_by_id(db, user_id=user_id)
     if db_user is None:
-        raise HTTPException(status_code=404, detail="User not found")
-    return db_user
+        return ResponseConstant.NO_SUCH_ISSUER
+    return {
+        "ResponseCode": ResponseConstant.SUCCESS.ResponseCode,
+        "ResponseMessage": ResponseConstant.SUCCESS.ResponseMessage, 
+        "body" : db_user
+        }
 
 @app.get("/read-user-by-email/{user_email}", response_model=schemas.User)
 def read_user_by_email(user_email: str, db: Session = Depends(get_db)):

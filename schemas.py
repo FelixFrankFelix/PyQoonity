@@ -1,5 +1,5 @@
 from pydantic import BaseModel,Field,StrictStr,field_validator
-from typing import Optional
+from typing import Optional,Any,Dict,Union
 from datetime import datetime
 
 class UserBase(BaseModel):
@@ -31,3 +31,18 @@ class User(UserBase):
 
     class Config:
         orm_mode = True
+
+
+class BaseResponse(BaseModel):
+    ResponseCode: str
+    ResponseMessage: str
+
+class DetailedResponse(BaseModel):
+    ResponseCode: str
+    ResponseMessage: str
+    body: User
+
+
+    
+
+ResponseUnion = Union[DetailedResponse, BaseResponse]

@@ -1,5 +1,5 @@
 from pydantic import BaseModel,Field,StrictStr,field_validator
-from typing import Optional,Any,Dict,Union
+from typing import Optional,Any,Dict,Union,List
 from datetime import datetime
 
 class UserBase(BaseModel):
@@ -34,15 +34,19 @@ class User(UserBase):
 
 
 class BaseResponse(BaseModel):
-    ResponseCode: str
-    ResponseMessage: str
-
-class DetailedResponse(BaseModel):
-    ResponseCode: str
-    ResponseMessage: str
-    body: User
-
-
+    responseCode: str
+    responseMessage: str
     
 
-ResponseUnion = Union[DetailedResponse, BaseResponse]
+class DetailedResponseUser(BaseModel):
+    responseCode: str
+    responseMessage: str
+    body: User
+
+class DetailedResponseUsers(BaseModel):
+    responseCode: str
+    responseMessage: str
+    body: List[User]
+  
+ResponseUnionUser = Union[DetailedResponseUser, BaseResponse]
+ResponseUnionUsers = Union[DetailedResponseUsers, BaseResponse]

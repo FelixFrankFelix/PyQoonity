@@ -4,28 +4,32 @@ from datetime import datetime
 from schemas import UserCreate, UserUpdate
 from typing import List
 from fastapi import HTTPException
+from query import CrudQuery
 
 def get_user_by_id(db: Session, user_id: int):
-    result = db.execute(text("SELECT * FROM users WHERE user_id = :user_id AND user_status != 'DELETED'"), {'user_id': user_id})
+    result = db.execute(text(CrudQuery.READ_BY_ID), 
+                        {'user_id': user_id})
     return result.fetchone()
 
 def get_user_by_email(db: Session, user_email: str):
-    result = db.execute(text("SELECT * FROM users WHERE user_email = :user_email AND user_status != 'DELETED'"), {'user_email': user_email})
+    result = db.execute(text(CrudQuery.READ_BY_EMAIL), 
+                        {'user_email': user_email})
     return result.fetchone()
 
 def get_user_by_name(db: Session, user_name: str):
-    result = db.execute(text("SELECT * FROM users WHERE user_name = :user_name AND user_status != 'DELETED'"), {'user_name': user_name})
+    result = db.execute(text(CrudQuery.READ_BY_NAME), 
+                        {'user_name': user_name})
     return result.fetchall()
 
 def get_users(db: Session):
-    result = db.execute(text("SELECT * FROM users WHERE user_status != 'DELETED' ORDER BY user_id"))
+    result = db.execute(text(CrudQuery.READ_ALL))
     return result.fetchall()
 
 def create_user(db: Session, user: UserCreate):
     user_created_at = datetime.now()
     user_updated_at = user_created_at
     db.execute(
-        text("INSERT INTO users (user_name, user_email, user_password, user_created_at, user_updated_at, user_status) VALUES (:user_name, :user_email, :user_password, :user_created_at, :user_updated_at, :user_status)"),
+        text(CrudQuery.CREATE),
         {
             'user_name': user.user_name,
             'user_email': user.user_email,
@@ -53,23 +57,8 @@ def update_user(db: Session, user_id: int, user: UserUpdate):
         'user_status': user.user_status if user.user_status else db_user.user_status
     }
 
-    # Construct the SQL update statement dynamically based on provided fields
-    #update_query = "UPDATE users SET "
-    #update_fields = []
-    #update_params = {}
-
-    #for key, value in update_data.items():
-    #    if value is not None:
-    #        update_fields.append(f"{key} = :{key}")
-    #        update_params[key] = value
-
-    #update_query += ", ".join(update_fields)
-    #update_query += " WHERE user_id = :user_id"
     update_data['user_id'] = user_id
-
-    # Execute the update query
-    #db.execute(text(update_query), update_params)
-    db.execute(text("UPDATE users SET user_name = :user_name, user_email = :user_email,user_password = :user_password, user_updated_at = :user_updated_at, user_status = :user_status WHERE user_id = :user_id"),update_data)
+    db.execute(text(CrudQuery.UPDATE),update_data)
     db.commit()
 
     # Return the updated user
@@ -78,12 +67,9 @@ def update_user(db: Session, user_id: int, user: UserUpdate):
 def delete_user(db: Session, user_id: int):
     user_updated_at = datetime.now()
     db.execute(
-        text("UPDATE users SET user_status = 'DELETED', user_updated_at = :user_updated_at WHERE user_id = :user_id"),
+        text(CrudQuery.DELETE),
         {'user_updated_at': user_updated_at, 'user_id': user_id}
     )
     db.commit()
     return get_user_by_id(db, user_id)
 
-#def get_user_by_email(db: Session, user_email: str):
-#    result = db.execute(text("SELECT * FROM users WHERE user_email = :user_email"), {'user_email': user_email})
-#    return result.fetchone()

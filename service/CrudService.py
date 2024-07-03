@@ -1,10 +1,3 @@
-from fastapi import FastAPI, Depends, HTTPException
-from sqlalchemy.orm import Session
-from typing import List,Union
-from model.request import CrudRequest
-from model.response import CrudResponse
-from repository.database import CrudRepository
-from db import SessionLocal, engine
 from utility.exceptions import ResponseConstant
 
 

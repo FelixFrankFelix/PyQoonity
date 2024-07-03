@@ -1,10 +1,10 @@
 from sqlalchemy.orm import Session
 from sqlalchemy import text
 from datetime import datetime
-from schemas import UserCreate, UserUpdate
+from model.request.CrudRequest import UserCreate, UserUpdate
 from typing import List
 from fastapi import HTTPException
-from query import CrudQuery
+from repository.database.query import CrudQuery
 
 def get_user_by_id(db: Session, user_id: int):
     result = db.execute(text(CrudQuery.READ_BY_ID), 

@@ -53,22 +53,7 @@ def update_user(db: Session, user_id: int, user: UserUpdate):
         'user_status': user.user_status if user.user_status else db_user.user_status
     }
 
-    # Construct the SQL update statement dynamically based on provided fields
-    #update_query = "UPDATE users SET "
-    #update_fields = []
-    #update_params = {}
-
-    #for key, value in update_data.items():
-    #    if value is not None:
-    #        update_fields.append(f"{key} = :{key}")
-    #        update_params[key] = value
-
-    #update_query += ", ".join(update_fields)
-    #update_query += " WHERE user_id = :user_id"
     update_data['user_id'] = user_id
-
-    # Execute the update query
-    #db.execute(text(update_query), update_params)
     db.execute(text("UPDATE users SET user_name = :user_name, user_email = :user_email,user_password = :user_password, user_updated_at = :user_updated_at, user_status = :user_status WHERE user_id = :user_id"),update_data)
     db.commit()
 

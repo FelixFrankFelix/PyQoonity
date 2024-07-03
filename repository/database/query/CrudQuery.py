@@ -1,3 +1,5 @@
+
+
 READ_BY_ID = "SELECT * FROM users WHERE user_id = :user_id AND user_status != 'DELETED'"
 READ_BY_EMAIL = "SELECT * FROM users WHERE user_email = :user_email AND user_status != 'DELETED'"
 READ_BY_NAME = "SELECT * FROM users WHERE user_name = :user_name AND user_status != 'DELETED'"

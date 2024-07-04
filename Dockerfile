@@ -28,4 +28,4 @@ COPY . .
 EXPOSE 8000
 
 # Specify the command to run the application
-CMD ["uvicorn", "controller.CrudController:app", "--host", "0.0.0.0", "--port", "8000"]
+CMD ["uvicorn", "controller.UserController:app", "--host", "0.0.0.0", "--port", "8000"]

@@ -1,6 +1,6 @@
 from pydantic import BaseModel
 from typing import Union,List
-from model.request.CrudRequest import User
+from model.request.UserRequest import User
 
 class BaseResponse(BaseModel):
     responseCode: str

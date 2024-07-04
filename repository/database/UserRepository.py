@@ -1,35 +1,35 @@
 from sqlalchemy.orm import Session
 from sqlalchemy import text
 from datetime import datetime
-from model.request.CrudRequest import UserCreate, UserUpdate
+from model.request.UserRequest import UserCreate, UserUpdate
 from typing import List
 from fastapi import HTTPException
-from repository.database.query import CrudQuery
+from repository.database.query import UserQuery
 
 def get_user_by_id(db: Session, user_id: int):
-    result = db.execute(text(CrudQuery.READ_BY_ID), 
+    result = db.execute(text(UserQuery.READ_BY_ID), 
                         {'user_id': user_id})
     return result.fetchone()
 
 def get_user_by_email(db: Session, user_email: str):
-    result = db.execute(text(CrudQuery.READ_BY_EMAIL), 
+    result = db.execute(text(UserQuery.READ_BY_EMAIL), 
                         {'user_email': user_email})
     return result.fetchone()
 
 def get_user_by_name(db: Session, user_name: str):
-    result = db.execute(text(CrudQuery.READ_BY_NAME), 
+    result = db.execute(text(UserQuery.READ_BY_NAME), 
                         {'user_name': user_name})
     return result.fetchall()
 
 def get_users(db: Session):
-    result = db.execute(text(CrudQuery.READ_ALL))
+    result = db.execute(text(UserQuery.READ_ALL))
     return result.fetchall()
 
 def create_user(db: Session, user: UserCreate):
     user_created_at = datetime.now()
     user_updated_at = user_created_at
     db.execute(
-        text(CrudQuery.CREATE),
+        text(UserQuery.CREATE),
         {
             'user_name': user.user_name,
             'user_email': user.user_email,
@@ -58,7 +58,7 @@ def update_user(db: Session, user_id: int, user: UserUpdate):
     }
 
     update_data['user_id'] = user_id
-    db.execute(text(CrudQuery.UPDATE),update_data)
+    db.execute(text(UserQuery.UPDATE),update_data)
     db.commit()
 
     # Return the updated user
@@ -67,7 +67,7 @@ def update_user(db: Session, user_id: int, user: UserUpdate):
 def delete_user(db: Session, user_id: int):
     user_updated_at = datetime.now()
     db.execute(
-        text(CrudQuery.DELETE),
+        text(UserQuery.DELETE),
         {'user_updated_at': user_updated_at, 'user_id': user_id}
     )
     db.commit()

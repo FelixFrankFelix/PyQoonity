@@ -1,4 +1,4 @@
-from model.response.CrudResponse import BaseResponse
+from model.response.UserResponse import BaseResponse
 
 class ResponseConstant:
     SUCCESS = BaseResponse(responseCode="00", responseMessage="Completed successfully")
